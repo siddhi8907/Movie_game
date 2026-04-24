@@ -18,9 +18,8 @@ router.post('/signup', async(req,res)=>{
 
 
         //Now to convert the password into a hidden code
-        //salting first adds random chars in between
-        const salt = bcrypt.genSalt(10);
-        const hashed_pswd= bcrypt.hash(password, salt);
+        //salting  adds random chars in between
+        const hashed_pswd= await bcrypt.hash(password, 10);
 
         //Saving to database
         user = new User({

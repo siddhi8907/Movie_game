@@ -8,11 +8,11 @@ const app= express();
 app.use(cors());
 app.use(express.json());
 
-const URI= 'mongodb+srv://Siddhi:Siddhi@8mongoDB@cluster0.wmiuppx.mongodb.net/?movies=Cluster0'
+const URI= 'mongodb+srv://Siddhi:Hello123@cluster0.wmiuppx.mongodb.net/movies?retryWrites=true&w=majority'
 
 mongoose.connect(URI, {dbName: 'movies'})
 .then(()=> console.log("Database Connected successfully!"))
-.catch(err => console.log(err));
+.catch(err => console.log(err.message));
 
 const authroutes = require('./routes/auth');
 
@@ -22,6 +22,6 @@ app.get('/api/health', (req,res)=> {
     res.send("Checking ..,,,")
 });
 
-const PORT = process.env.port || 5000;
+const PORT = process.env.port || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
