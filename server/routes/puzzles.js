@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Puzzle = require('../models/Puzzle');
 const User = require('../models/user');
-const auth = require('../routes/auth'); 
+const auth = require('../middleware/auth'); 
 
 router.get('/random', auth, async (req, res) => {
     try {
@@ -10,13 +10,13 @@ router.get('/random', auth, async (req, res) => {
         const user = await User.findById(req.user.userId); 
 
         // Fallback to empty array if field doesn't exist yet
-        const solvedList = user.solvedPuzzles || []; 
+        const solvedList = user.solved_puzzles || []; 
 
         let query = { _id: { $nin: solvedList } };
 
         if (difficulty) {
             // Added 'i' for case-insensitivenesss
-            query.difficulty = { $regex: new RegExp(difficulty, "i") };
+            query.difficulty = { $regex: new RegExp(`^${difficulty}$`, "i") };
         }
 
         console.log("Search Query:", JSON.stringify(query));
@@ -40,14 +40,18 @@ router.post('/solve', auth, async (req, res) => {
         const { puzzleId } = req.body;
         const user = await User.findById(req.user.userId);
 
-        if (!user.solvedPuzzles) user.solvedPuzzles = [];
+        if (!user) return res.status(404).json({ msg: "User not found" });
 
-        if (!user.solvedPuzzles.includes(puzzleId)) {
-            user.solvedPuzzles.push(puzzleId);
+        if (!user.solved_puzzles) user.solved_puzzles = [];
+
+        // ✅ Fixed: use solved_puzzles
+        if (!user.solved_puzzles.includes(puzzleId)) {
+            user.solved_puzzles.push(puzzleId);
             await user.save();
         }
         res.json({ msg: "Progress saved!" });
     } catch (err) {
+      console.error(err);
         res.status(500).json({ msg: "Server Error" });
     }
 });

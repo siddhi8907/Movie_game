@@ -55,7 +55,7 @@ router.post('/login', async(req,res)=>
             return res.status(500).json({ msg: "Server Configuration Error" });
         }
 
-        const payload = { userId: user.id };
+        const payload = { userId: user._id };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         //now we make a code so that the server can identify, it's the same user and it is signed so that it can't be copied

@@ -32,6 +32,13 @@ function Home() {
                  >
                     PLAY GAME
                  </button>
+
+                  <button
+                    onClick={() => navigate('/leaderboard')}
+                    className='border border-zinc-700 text-zinc-400 py-3 font-bold hover:bg-zinc-800 hover:text-white tracking-widest text-sm'
+                >
+                  LEADERBOARD
+                </button>
             </div>
         </div>
     );

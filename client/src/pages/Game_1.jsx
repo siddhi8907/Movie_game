@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-//import Gamecard from '../components/Gamecard_1';
+import Gamecard from '../components/Gamecard_1';
 
 function Game() {
   const [puzzle, setPuzzle] = useState(null);
@@ -25,20 +25,23 @@ function Game() {
 
       //axios wraps everything in data
       setPuzzle(res.data);
-      setLoading(false);
+      
     } catch (err) {
       console.error("Error fetching puzzle", err);
+      setPuzzle(null);
+    } finally {
       setLoading(false);
     }
   };
 
   // Fetch a puzzle as soon as the page loads
+
   useEffect(() => {
     fetchPuzzle();
   }, []);
 
   if (loading) return <div className="text-white text-center mt-20">Loading Puzzle...</div>;
-  
+
   if (!puzzle) return (
     <div className="text-white text-center mt-20">
       <p>No more puzzles left in this difficulty!</p>
@@ -48,20 +51,15 @@ function Game() {
 
   return (
     <div className="min-h-screen bg-pink-100 p-4">
-      <button 
-        onClick={() => navigate('/home')} 
-        className="text-zinc-950 mb-8 hover:text-white"
-      >
+      <button onClick={() => navigate('/home')} className="text-zinc-950 mb-8 hover:text-white">
         ← Back
       </button>
-
       <div className="max-w-md mx-auto">
         <h2 className="text-zinc-950 uppercase text-xs tracking-widest mb-2">
           Difficulty: {difficulty}
         </h2>
         
-        {/* We pass the fetched puzzle into our GameCard component */}
-        <GameCard puzzle={puzzle} nextPuzzle={fetchPuzzle} />
+        <Gamecard puzzle={puzzle} nextPuzzle={fetchPuzzle} />
       </div>
     </div>
   );
