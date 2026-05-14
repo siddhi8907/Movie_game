@@ -40,13 +40,20 @@ router.post('/login', async(req,res)=>
 {
     try{
         const {username, password}= req.body;
-        let check = await User.findOne({username});
-        if(!check) return res.status(400).json({msg: "No user found"});
+        console.log("Login attempt for:", username);
 
-        let verify= await bcrypt.compare(password, hashed_pswd);
+        let user = await User.findOne({username});
+        if(!user) return res.status(400).json({msg: "No user found"});
+
+        let verify = await bcrypt.compare(password, user.password);
         if(!verify) return res.status(400).json({msg: "Wrong Password"});
     
         //check if such user exists with same username
+
+        if (!process.env.JWT_SECRET) {
+            console.error("FATAL ERROR: JWT_SECRET is not defined in .env");
+            return res.status(500).json({ msg: "Server Configuration Error" });
+        }
 
         const payload = { userId: user.id };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -55,6 +62,7 @@ router.post('/login', async(req,res)=>
 
         res.json({ token, username: user.username });
     } catch(err){
+        console.error("DETAILED SERVER ERROR:", err);
         res.status(500).json({msg: "Server Error"});
     }
 });

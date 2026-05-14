@@ -2,15 +2,17 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
+
+
 require('dotenv').config();
 
 const app= express();
 app.use(cors());
 app.use(express.json());
 
-const URI= 'mongodb+srv://Siddhi:Hello123@cluster0.wmiuppx.mongodb.net/movies?retryWrites=true&w=majority'
 
-mongoose.connect(URI, {dbName: 'movies'})
+
+mongoose.connect(process.env.MONGO_URI, {dbName: 'movies'})
 .then(()=> console.log("Database Connected successfully!"))
 .catch(err => console.log(err.message));
 
@@ -18,6 +20,10 @@ const authroutes = require('./routes/auth');
 
 app.use('/api/auth', authroutes);
 
+
+
+
+app.use('/api/puzzles', require('./routes/puzzles'));
 app.get('/api/health', (req,res)=> {
     res.send("Checking ..,,,")
 });
