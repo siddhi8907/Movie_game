@@ -60,3 +60,5 @@ function GameCard({puzzle}){
 
 }
 
+export default Gamecard;
+
